@@ -1,0 +1,60 @@
+<project name="usermanagement" basedir="." default="test">
+    	
+    <property name="build-dir" value="${basedir}/target"/>
+    <property name="classes-dir" value="${build-dir}/classes"/>
+    <property name="main-java-dir" value="${basedir}/src/main/java"/>
+    <property name="test-java-dir" value="${basedir}/src/test/java"/>
+    
+    <target name="clean">
+        <delete dir="${build-dir}" failonerror="no"/>
+    </target>
+    
+    <target name="init" depends="clean">
+        <mkdir dir="${build-dir}"/>
+        <mkdir dir="${classes-dir}"/>      
+    </target>   
+    
+    <target name="compile" depends="init">
+        <javac srcdir="${main-java-dir}" destdir="${classes-dir}">
+            <classpath>
+                <fileset dir="${lib-dir}"/>
+            </classpath>
+            </javac>
+        <copy todir="${classes-dir}">
+            <fileset dir="${main-resources-dir}">
+                <include name="**/*.properties"/>
+                <include name="**/*.xml"/>   
+            </fileset>
+        </copy>      
+    </target>
+    
+    <target name="test-compile" depends="compile">
+        <javac srcdir="${test-java-dir}" destdir="${classes-dir}">
+            <classpath>
+                <fileset dir="${lib-dir}"/>
+            </classpath>
+        </javac>
+        <copy todir="${classes-dir}">
+            <fileset dir="${test-resources-dir}">
+                <include name="**/*.properties"/>
+                <include name="**/*.xml"/>
+            </fileset>
+        </copy>      
+    </target>
+    
+    <target name="test" depends="test-compile">
+        <junit>
+            <classpath>
+                <pathelement location="${classes-dir}"/>
+                <fileset dir="${lib-dir}"/>
+            </classpath>
+        	<formatter type="plain"/>
+            <batchtest>
+                <fileset dir="${test-java-dir}">
+                    <include name="**/*Test.java"/> 
+                </fileset>            
+            </batchtest>
+        </junit>        
+    </target>   
+</project>
+	
