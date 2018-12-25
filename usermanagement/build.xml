@@ -4,6 +4,7 @@
     <property name="classes-dir" value="${build-dir}/classes"/>
     <property name="main-java-dir" value="${basedir}/src/main/java"/>
     <property name="test-java-dir" value="${basedir}/src/test/java"/>
+	<property name="main-resources-dir" value="${basedir}/src/main/resources"/>
     
     <target name="clean">
         <delete dir="${build-dir}" failonerror="no"/>
