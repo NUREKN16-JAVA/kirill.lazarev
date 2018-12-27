@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -17,6 +18,7 @@ class HsqldbUserDao implements UserDao {
 	private static final String SELECT_ALL_QUERY = "SELECT id, firstname, last, name, dateofbirthd FROM users";
 	private static final String INSERT_QUERY = "INSERT INTO users (firstname, lasrname, DateOfBirthd) VALUES (?, ?, ?)";
 	private ConnectionFactory connectionFactory;
+	private static final String NAME_QUERY = "SELECT ID, DATEOFBIRTH FROM USERS WHERE FIRSTNAME=? AND LASTNAME=?";
 
 	public HsqldbUserDao() {
 	}
@@ -101,4 +103,31 @@ class HsqldbUserDao implements UserDao {
 		return result;
 	}
 
+	public Collection find(String firstName, String lastName) throws DatabaseExeption{
+		Collection result = new LinkedList();
+		try {
+            Connection connection = connectionFactory.createConnection();
+            PreparedStatement statement = connection.prepareStatement(NAME_QUERY);
+            statement.setString(1, firstName);
+            statement.setString(2, lastName);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+				User user = new User();
+				user.setiD(new Long(resultSet.getLong(1)));
+				user.setFirstName(resultSet.getString(2));
+				user.setLastName(resultSet.getString(3));
+				user.setDateOfBirthd(resultSet.getDate(4));
+				result.add(user);
+			}
+
+            resultSet.close();
+            statement.close();
+            connection.close();
+            return result;
+        } catch (SQLException e) {
+            throw new DatabaseExeption(e);
+        }
+	}
+	
 }
